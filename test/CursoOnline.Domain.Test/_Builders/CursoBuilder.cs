@@ -1,5 +1,4 @@
 ﻿using CursoOnline.Domain.Cursos;
-using CursoOnline.Domain.Test.Cursos;
 
 namespace CursoOnline.Domain.Test._Builders
 {
@@ -15,7 +14,7 @@ namespace CursoOnline.Domain.Test._Builders
         public static CursoBuilder Novo()
         {
             return new CursoBuilder();
-        }
+        } 
 
         public CursoBuilder ComNome(string nome)
         {
