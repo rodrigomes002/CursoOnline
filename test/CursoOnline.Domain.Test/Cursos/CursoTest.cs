@@ -1,4 +1,7 @@
-﻿using CursoOnline.Domain.Test._Utils;
+﻿using Bogus;
+using CursoOnline.Domain.Cursos;
+using CursoOnline.Domain.Test._Builders;
+using CursoOnline.Domain.Test._Utils;
 using ExpectedObjects;
 using Xunit.Abstractions;
 
@@ -6,28 +9,33 @@ namespace CursoOnline.Domain.Test.Cursos
 {
     public class CursoTest : IDisposable
     {
-        private readonly ITestOutputHelper outputHelper;
-        private readonly string nome;
-        private readonly double cargaHoraria;
-        private readonly PublicoAlvo publicoAlvo;
-        private readonly double valor;
+        private readonly ITestOutputHelper _outputHelper;
+        private readonly string _nome;
+        private readonly double _cargaHoraria;
+        private readonly PublicoAlvo _publicoAlvo;
+        private readonly double _valor;
+        private readonly string _descricao;
 
         //setup
         public CursoTest(ITestOutputHelper outputHelper)
         {
-            this.outputHelper = outputHelper;
-            this.outputHelper.WriteLine("Construtor sendo executado!");
+            this._outputHelper = outputHelper;
+            this._outputHelper.WriteLine("Construtor sendo executado!");
 
-            nome = "Informática básica";
-            cargaHoraria = 80;
-            publicoAlvo = PublicoAlvo.Estudante;
-            valor = 950;
+            //bogus - dados aleatórios
+            var faker = new Faker();
+
+            _nome = faker.Random.Word();
+            _cargaHoraria = faker.Random.Double(50, 1000);
+            _publicoAlvo = PublicoAlvo.Estudante;
+            _valor = faker.Random.Double(100, 1000);
+            _descricao = faker.Lorem.Paragraph();
         }
 
         //cleanup
         public void Dispose()
         {
-            this.outputHelper.WriteLine("Dispose sendo executado!");
+            this._outputHelper.WriteLine("Dispose sendo executado!");
         }
 
         [Fact]
@@ -35,13 +43,14 @@ namespace CursoOnline.Domain.Test.Cursos
         {
             var custoEsperado = new
             {
-                Nome = "Informática básica",
-                CargaHoraria = (double)80,
-                PublicoAlvo = PublicoAlvo.Estudante,
-                Valor = (double)950,
+                Nome = _nome,
+                CargaHoraria = _cargaHoraria,
+                PublicoAlvo = _publicoAlvo,
+                Valor = _valor,
+                Descricao = _descricao
             };
 
-            var curso = new Curso(nome, cargaHoraria, publicoAlvo, valor);
+            var curso = new Curso(custoEsperado.Nome, custoEsperado.CargaHoraria, custoEsperado.PublicoAlvo, custoEsperado.Valor, custoEsperado.Descricao);
 
             custoEsperado.ToExpectedObject().ShouldMatch(curso);
         }
@@ -52,7 +61,7 @@ namespace CursoOnline.Domain.Test.Cursos
         public void NaoDeveCursoTerUmNomeInvalido(string nomeInvalido)
         {
             //exemplo com assert comum
-            var ex = Assert.Throws<ArgumentException>(() => new Curso(nomeInvalido, cargaHoraria, publicoAlvo, valor));
+            var ex = Assert.Throws<ArgumentException>(() => CursoBuilder.Novo().ComNome(nomeInvalido).Build());
             Assert.Equal("Nome inválido", ex.Message);
         }
 
@@ -62,7 +71,7 @@ namespace CursoOnline.Domain.Test.Cursos
         public void NaoDeveCursoTerUmaCargaHorariaMenorQueUm(double carcaHorariaInvalida)
         {
             //exemplo com método de extensão
-            Assert.Throws<ArgumentException>(() => new Curso(nome, carcaHorariaInvalida, publicoAlvo, valor))
+            Assert.Throws<ArgumentException>(() => CursoBuilder.Novo().ComCargaHoraria(carcaHorariaInvalida).Build())
                 .ComMensagem("Carga horária inválida");
         }
 
@@ -71,7 +80,7 @@ namespace CursoOnline.Domain.Test.Cursos
         [InlineData(-2)]
         public void NaoDeveCursoTerValorMenorQueUm(double valorInvalido)
         {
-            var ex = Assert.Throws<ArgumentException>(() => new Curso(nome, cargaHoraria, publicoAlvo, valorInvalido));
+            var ex = Assert.Throws<ArgumentException>(() => CursoBuilder.Novo().ComValor(valorInvalido).Build());
             Assert.Equal("Valor inválido", ex.Message);
         }
 
