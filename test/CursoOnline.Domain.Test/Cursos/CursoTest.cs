@@ -1,9 +1,35 @@
-﻿using ExpectedObjects;
+﻿using CursoOnline.Domain.Test._Utils;
+using ExpectedObjects;
+using Xunit.Abstractions;
 
 namespace CursoOnline.Domain.Test.Cursos
 {
-    public class CursoTest
+    public class CursoTest : IDisposable
     {
+        private readonly ITestOutputHelper outputHelper;
+        private readonly string nome;
+        private readonly double cargaHoraria;
+        private readonly PublicoAlvo publicoAlvo;
+        private readonly double valor;
+
+        //setup
+        public CursoTest(ITestOutputHelper outputHelper)
+        {
+            this.outputHelper = outputHelper;
+            this.outputHelper.WriteLine("Construtor sendo executado!");
+
+            nome = "Informática básica";
+            cargaHoraria = 80;
+            publicoAlvo = PublicoAlvo.Estudante;
+            valor = 950;
+        }
+
+        //cleanup
+        public void Dispose()
+        {
+            this.outputHelper.WriteLine("Dispose sendo executado!");
+        }
+
         [Fact]
         public void DeveCriarCurso()
         {
@@ -15,7 +41,7 @@ namespace CursoOnline.Domain.Test.Cursos
                 Valor = (double)950,
             };
 
-            var curso = new Curso(custoEsperado.Nome, custoEsperado.CargaHoraria, custoEsperado.PublicoAlvo, custoEsperado.Valor);
+            var curso = new Curso(nome, cargaHoraria, publicoAlvo, valor);
 
             custoEsperado.ToExpectedObject().ShouldMatch(curso);
         }
@@ -25,15 +51,8 @@ namespace CursoOnline.Domain.Test.Cursos
         [InlineData(null)]
         public void NaoDeveCursoTerUmNomeInvalido(string nomeInvalido)
         {
-            var custoEsperado = new
-            {
-                Nome = nomeInvalido,
-                CargaHoraria = (double)80,
-                PublicoAlvo = PublicoAlvo.Estudante,
-                Valor = (double)950,
-            };
-
-            var ex = Assert.Throws<ArgumentException>(() => new Curso(custoEsperado.Nome, custoEsperado.CargaHoraria, custoEsperado.PublicoAlvo, custoEsperado.Valor));
+            //exemplo com assert comum
+            var ex = Assert.Throws<ArgumentException>(() => new Curso(nomeInvalido, cargaHoraria, publicoAlvo, valor));
             Assert.Equal("Nome inválido", ex.Message);
         }
 
@@ -42,16 +61,9 @@ namespace CursoOnline.Domain.Test.Cursos
         [InlineData(-2)]
         public void NaoDeveCursoTerUmaCargaHorariaMenorQueUm(double carcaHorariaInvalida)
         {
-            var custoEsperado = new
-            {
-                Nome = "Informática básica",
-                CargaHoraria = carcaHorariaInvalida,
-                PublicoAlvo = PublicoAlvo.Estudante,
-                Valor = (double)950,
-            };
-
-            var ex = Assert.Throws<ArgumentException>(() => new Curso(custoEsperado.Nome, custoEsperado.CargaHoraria, custoEsperado.PublicoAlvo, custoEsperado.Valor));
-            Assert.Equal("Carga horária inválida", ex.Message);
+            //exemplo com método de extensão
+            Assert.Throws<ArgumentException>(() => new Curso(nome, carcaHorariaInvalida, publicoAlvo, valor))
+                .ComMensagem("Carga horária inválida");
         }
 
         [Theory]
@@ -59,16 +71,10 @@ namespace CursoOnline.Domain.Test.Cursos
         [InlineData(-2)]
         public void NaoDeveCursoTerValorMenorQueUm(double valorInvalido)
         {
-            var custoEsperado = new
-            {
-                Nome = "Informática básica",
-                CargaHoraria = (double)80,
-                PublicoAlvo = PublicoAlvo.Estudante,
-                Valor = valorInvalido,
-            };
-
-            var ex = Assert.Throws<ArgumentException>(() => new Curso(custoEsperado.Nome, custoEsperado.CargaHoraria, custoEsperado.PublicoAlvo, custoEsperado.Valor));
+            var ex = Assert.Throws<ArgumentException>(() => new Curso(nome, cargaHoraria, publicoAlvo, valorInvalido));
             Assert.Equal("Valor inválido", ex.Message);
         }
+
+        
     }
 }
