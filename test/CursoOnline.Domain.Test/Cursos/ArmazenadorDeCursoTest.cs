@@ -1,5 +1,6 @@
 ﻿using Bogus;
 using CursoOnline.Domain.Cursos;
+using CursoOnline.Domain.Test._Builders;
 using CursoOnline.Domain.Test._Utils;
 using Moq;
 
@@ -44,6 +45,17 @@ namespace CursoOnline.Domain.Test.Cursos
         }
 
         [Fact]
+        public void NaoDeveAdicionarCursoComMesmoNomeDeOutroJaSalvo()
+        {
+            //stub
+            var cursoJaSalvo = CursoBuilder.Novo().ComNome(_cursoDTO.Nome).Build();
+            _cursoRepositoryMock.Setup(r => r.ObterPeloNome(_cursoDTO.Nome)).Returns(cursoJaSalvo);
+
+            Assert.Throws<ArgumentException>(() => _armazenadorDeCurso.Armazenar(_cursoDTO))
+                .ComMensagem("Nome do curso já consta no banco de dados");
+        }
+
+        [Fact]
         public void NaoDeveInformarPublicoAlvoInvalido()
         {
             var publicoAlvoInvalido = "Medico";
@@ -51,5 +63,7 @@ namespace CursoOnline.Domain.Test.Cursos
             Assert.Throws<ArgumentException>(() => _armazenadorDeCurso.Armazenar(_cursoDTO))
                 .ComMensagem("Publico Alvo inválido");
         }
+
+       
     }
 }
