@@ -51,7 +51,6 @@ namespace CursoOnline.Dominio.Test.Cursos
         [InlineData(null)]
         public void NaoDeveCursoTerUmNomeInvalido(string nomeInvalido)
         {
-            //exemplo com assert comum
             Assert.Throws<ExcecaoDeDominio>(() => CursoBuilder.Novo().ComNome(nomeInvalido).Build())
                 .ComMensagem(Resource.NomeInvalido);
         }
@@ -61,7 +60,6 @@ namespace CursoOnline.Dominio.Test.Cursos
         [InlineData(-2)]
         public void NaoDeveCursoTerUmaCargaHorariaInvalida(double carcaHorariaInvalida)
         {
-            //exemplo com método de extensão
             Assert.Throws<ExcecaoDeDominio>(() => CursoBuilder.Novo().ComCargaHoraria(carcaHorariaInvalida).Build())
                 .ComMensagem(Resource.CargaHorariaInvalida);
         }

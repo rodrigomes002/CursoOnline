@@ -20,37 +20,37 @@ namespace CursoOnline.Dominio.Test._Builders
 
         public CursoBuilder ComNome(string nome)
         {
-            this._nome = nome;
+            _nome = nome;
             return this;
         }
 
         public CursoBuilder ComDescricao(string descricao)
         {
-            this._descricao = descricao;
+            _descricao = descricao;
             return this;
         }
 
         public CursoBuilder ComCargaHoraria(double cargaHoraria)
         {
-            this._cargaHoraria = cargaHoraria;
+            _cargaHoraria = cargaHoraria;
             return this;
         }
 
         public CursoBuilder ComValor(double valor)
         {
-            this._valor = valor;
+            _valor = valor;
             return this;
         }
 
         public CursoBuilder ComPublicoAlvo(PublicoAlvo publicoAlvo)
         {
-            this._publicoAlvo = publicoAlvo;
+            _publicoAlvo = publicoAlvo;
             return this;
         }
 
         public CursoBuilder ComId(int id)
         {
-            this._id = id;
+            _id = id;
             return this;
         }
 
@@ -66,7 +66,6 @@ namespace CursoOnline.Dominio.Test._Builders
 
             return curso;
         }
-
 
     }
 }
