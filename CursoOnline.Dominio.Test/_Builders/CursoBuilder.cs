@@ -11,11 +11,12 @@ namespace CursoOnline.Dominio.Test._Builders
         private PublicoAlvo _publicoAlvo = PublicoAlvo.Estudante;
         private double _valor = 950;
         private string _descricao = "Uma descrição";
+        private int _id;
 
         public static CursoBuilder Novo()
         {
             return new CursoBuilder();
-        } 
+        }
 
         public CursoBuilder ComNome(string nome)
         {
@@ -47,9 +48,25 @@ namespace CursoOnline.Dominio.Test._Builders
             return this;
         }
 
+        public CursoBuilder ComId(int id)
+        {
+            this._id = id;
+            return this;
+        }
+
         public Curso Build()
         {
-            return new Curso(_nome, _descricao, _cargaHoraria, _publicoAlvo, _valor);
+            var curso = new Curso(_nome, _descricao, _cargaHoraria, _publicoAlvo, _valor);
+
+            if (_id > 0)
+            {
+                var propertyInfo = curso.GetType().GetProperty("Id");
+                propertyInfo.SetValue(curso, Convert.ChangeType(_id, propertyInfo.PropertyType), null);
+            }
+
+            return curso;
         }
+
+
     }
 }
